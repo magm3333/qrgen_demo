@@ -13,28 +13,42 @@
     </header>
     
     <main class="app-main">
-      <SplitView>
-        <template #left>
-          <QRGenerator 
-            v-model:content="content"
-            v-model:size="size"
-            v-model:margin="margin"
-            v-model:errorCorrection="errorCorrection"
-            v-model:darkColor="darkColor"
-            v-model:lightColor="lightColor"
-          />
-        </template>
-        <template #right>
-          <QRPreview 
-            :content="content"
-            :size="size"
-            :margin="margin"
-            :errorCorrection="errorCorrection"
-            :darkColor="darkColor"
-            :lightColor="lightColor"
-          />
-        </template>
-      </SplitView>
+      <div class="main-tabs">
+        <button 
+          class="tab-btn" 
+          :class="{ active: activeTab === 'generator' }"
+          @click="activeTab = 'generator'"
+        >
+          Generador QR
+        </button>
+        <button 
+          class="tab-btn" 
+          :class="{ active: activeTab === 'template' }"
+          @click="activeTab = 'template'"
+        >
+          Editor Plantillas
+        </button>
+      </div>
+      
+      <div class="tab-content">
+        <QRGenerator 
+          v-if="activeTab === 'generator'"
+          v-model:content="content"
+          v-model:size="size"
+          v-model:margin="margin"
+          v-model:errorCorrection="errorCorrection"
+          v-model:darkColor="darkColor"
+          v-model:lightColor="lightColor"
+        />
+        
+        <TemplateEditor 
+          v-if="activeTab === 'template'"
+          :content="content"
+          :darkColor="darkColor"
+          :lightColor="lightColor"
+          :size="size"
+        />
+      </div>
     </main>
   </div>
 </template>
@@ -42,9 +56,8 @@
 <script setup>
 import { ref } from 'vue'
 import { useTheme } from './composables/useTheme'
-import SplitView from './components/SplitView.vue'
 import QRGenerator from './components/QRGenerator.vue'
-import QRPreview from './components/QRPreview.vue'
+import TemplateEditor from './components/TemplateEditor.vue'
 
 const { isDark, toggleTheme } = useTheme()
 
@@ -55,6 +68,7 @@ const margin = ref(2)
 const errorCorrection = ref('M')
 const darkColor = ref('#000000')
 const lightColor = ref('#ffffff')
+const activeTab = ref('generator')
 </script>
 
 <style>
@@ -164,5 +178,46 @@ body {
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+  padding: 1rem 2rem;
+}
+
+.main-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1rem;
+  background: var(--panel-bg, #fff);
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary, #7f8c8d);
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+}
+
+.tab-btn:hover {
+  background: var(--preview-bg, #f8f9fa);
+}
+
+.tab-btn.active {
+  color: var(--accent-color, #3498db);
+  border-bottom-color: var(--accent-color, #3498db);
+  background: var(--panel-bg, #fff);
+}
+
+.tab-content {
+  background: var(--panel-bg);
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  min-height: 500px;
 }
 </style>

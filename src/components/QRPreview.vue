@@ -3,6 +3,7 @@
     <h2 class="preview-title">Vista Previa</h2>
     <div class="qr-container">
       <QRCodeVue3
+        :key="qrKey"
         :value="content"
         :width="size"
         :height="size"
@@ -47,8 +48,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import QRCodeVue3 from 'qrcode-vue3'
+import QRCodeStyling from 'qr-code-styling'
 
 const props = defineProps({
   content: { type: String, default: '' },
@@ -61,8 +63,12 @@ const props = defineProps({
 
 const filename = ref('qr_code')
 
+const qrKey = computed(() => {
+  return `${props.content}-${props.size}-${props.darkColor}-${props.lightColor}-${props.errorCorrection}`
+})
+
 const downloadPNG = () => {
-  const qrCode = new QRCodeVue3.QRCodeStyling({
+  const qrCode = new QRCodeStyling({
     data: props.content || 'https://example.com',
     width: props.size,
     height: props.size,
@@ -85,7 +91,7 @@ const downloadJPG = () => {
   ctx.fillStyle = props.lightColor
   ctx.fillRect(0, 0, canvas.width, canvas.height)
   
-  const qrCode = new QRCodeVue3.QRCodeStyling({
+  const qrCode = new QRCodeStyling({
     data: props.content || 'https://example.com',
     width: props.size,
     height: props.size,
@@ -113,7 +119,7 @@ const downloadJPG = () => {
 }
 
 const downloadSVG = () => {
-  const qrCode = new QRCodeVue3.QRCodeStyling({
+  const qrCode = new QRCodeStyling({
     data: props.content || 'https://example.com',
     width: props.size,
     height: props.size,

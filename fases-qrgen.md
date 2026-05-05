@@ -57,20 +57,20 @@
 
 ---
 
-- [ ] **Fase 4: Editor de Plantillas (Template Editor)**
-  - [ ] Componente `TemplateEditor.vue`
-  - [ ] **Upload de imagen base:** Drag & drop o selector de archivo
-  - [ ] **Canvas editor:**
-    - [ ] Renderizar imagen de fondo
-    - [ ] Superponer QR generado automáticamente
-    - [ ] Controles interactivos:
-      - [ ] **Mover:** Drag & drop del QR sobre la imagen
-      - [ ] **Redimensionar:** Esquinas arrastrables o input numérico
-      - [ ] **Rotar:** Slider o input de grados (0-360°)
-  - [ ] **Exportación:**
-    - [ ] **SVG:** Usar `<foreignObject>` o librería para renderizar SVG final
-    - [ ] **PNG:** Renderizar canvas compuesto y exportar
-  - [ ] Evaluar librerías: `fabric.js`, `konva.js`, `html-to-image`
+- [x] **Fase 4: Editor de Plantillas (Template Editor)**
+  - [x] Componente `TemplateEditor.vue`
+  - [x] **Upload de imagen base:** Drag & drop o selector de archivo
+  - [x] **Canvas editor:**
+    - [x] Renderizar imagen de fondo
+    - [x] Superponer QR generado automáticamente
+    - [x] Controles interactivos:
+      - [x] **Mover:** Drag & drop del QR sobre la imagen
+      - [x] **Redimensionar:** Esquinas arrastrables o input numérico
+      - [x] **Rotar:** Slider o input de grados (0-360°)
+  - [x] **Exportación:**
+    - [x] **SVG:** Usar `html-to-image` para renderizar SVG final
+    - [x] **PNG:** Renderizar canvas compuesto y exportar
+  - [x] Evaluar librerías: `html-to-image` instalado y utilizado
 
 ---
 
