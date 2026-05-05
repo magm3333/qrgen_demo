@@ -4,7 +4,8 @@
     <div class="qr-container" ref="qrContainer">
       <QRCodeVue3
         :value="content"
-        :size="size"
+        :width="size"
+        :height="size"
         :margin="margin"
         :qrOptions="{ errorCorrectionLevel: errorCorrection }"
         :dotsOptions="{ type: 'square', color: darkColor }"
