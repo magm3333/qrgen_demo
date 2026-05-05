@@ -1,11 +1,23 @@
 <template>
   <div class="qr-preview">
     <h2 class="preview-title">Vista Previa</h2>
-    <div class="qr-container" v-html="qrSvg"></div>
+    <div class="qr-container" ref="qrContainer">
+      <QRCodeVue3
+        :value="content"
+        :size="size"
+        :margin="margin"
+        :qrOptions="{ errorCorrectionLevel: errorCorrection }"
+        :dotsOptions="{ type: 'square', color: darkColor }"
+        :backgroundOptions="{ color: lightColor }"
+        :cornersSquareOptions="{ type: 'square', color: darkColor }"
+        :cornersDotOptions="{ color: darkColor }"
+        :key="qrKey"
+      />
+    </div>
     
     <div class="preview-info">
-      <p class="info-text">Tamaño: {{ currentSize }}px</p>
-      <p class="info-text">Corrección: {{ currentError }}</p>
+      <p class="info-text">Tamaño: {{ size }}px</p>
+      <p class="info-text">Corrección: {{ errorCorrection }}</p>
     </div>
     
     <div class="download-section">
@@ -35,106 +47,81 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed } from 'vue'
+import QRCodeVue3 from 'qrcode-vue3'
 
 const props = defineProps({
-  content: String,
-  size: Number,
-  margin: Number,
-  errorCorrection: String,
-  darkColor: String,
-  lightColor: String
+  content: { type: String, default: '' },
+  size: { type: Number, default: 250 },
+  margin: { type: Number, default: 2 },
+  errorCorrection: { type: String, default: 'M' },
+  darkColor: { type: String, default: '#000000' },
+  lightColor: { type: String, default: '#ffffff' }
 })
 
 const filename = ref('qr_code')
-const qrSvg = ref('')
+const qrContainer = ref(null)
 
-const currentSize = computed(() => props.size || 250)
-const currentError = computed(() => props.errorCorrection || 'M')
-
-// Generar QR como SVG
-const generateQR = () => {
-  const qr = new URLSearchParams()
-  qr.append('data', props.content || 'https://example.com')
-  qr.append('size', String(currentSize.value))
-  qr.append('margin', String(props.margin || 2))
-  qr.append('color', props.darkColor || '#000000')
-  qr.append('bgcolor', props.lightColor || '#ffffff')
-  
-  // Usar Google Chart API para QR (simple y confiable)
-  const url = `https://chart.googleapis.com/chart?cht=qr&chs=${currentSize.value}x${currentSize.value}&chl=${encodeURIComponent(props.content || 'https://example.com')}&chco=${encodeURIComponent((props.darkColor || '#000000').replace('#', ''))}&chf=bg,s,${encodeURIComponent((props.lightColor || '#ffffff').replace('#', ''))}`
-  
-  qrSvg.value = `<img src="${url}" alt="QR Code" style="max-width:100%; height:auto;" />`
-}
-
-watch(() => [props.content, props.size, props.darkColor, props.lightColor, props.margin], () => {
-  generateQR()
-}, { immediate: true, deep: true })
-
-onMounted(() => {
-  generateQR()
+// Force re-render when props change
+const qrKey = computed(() => {
+  return `${props.content}-${props.size}-${props.darkColor}-${Date.now()}`
 })
 
 const downloadPNG = () => {
-  const img = qrContainer.value?.querySelector('img')
-  if (!img) return
+  const qrCode = new QRCodeVue3.QRCodeStyling({
+    data: props.content || 'https://example.com',
+    width: props.size,
+    height: props.size,
+    margin: props.margin,
+    qrOptions: { errorCorrectionLevel: props.errorCorrection },
+    dotsOptions: { type: 'square', color: props.darkColor },
+    backgroundOptions: { color: props.lightColor },
+    cornersSquareOptions: { type: 'square', color: props.darkColor },
+    cornersDotOptions: { color: props.darkColor }
+  })
   
-  const canvas = document.createElement('canvas')
-  canvas.width = currentSize.value
-  canvas.height = currentSize.value
-  const ctx = canvas.getContext('2d')
-  
-  const image = new Image()
-  image.crossOrigin = 'anonymous'
-  image.onload = () => {
-    ctx.drawImage(image, 0, 0)
-    const link = document.createElement('a')
-    link.download = `${filename.value}.png`
-    link.href = canvas.toDataURL('image/png')
-    link.click()
+  if (qrCode) {
+    qrCode.download({ name: filename.value, extension: 'png' })
   }
-  image.src = img.src
 }
 
 const downloadJPG = () => {
-  const img = qrContainer.value?.querySelector('img')
-  if (!img) return
-  
   const canvas = document.createElement('canvas')
-  canvas.width = currentSize.value
-  canvas.height = currentSize.value
   const ctx = canvas.getContext('2d')
+  canvas.width = props.size
+  canvas.height = props.size
   
-  // Fondo blanco para JPG
-  ctx.fillStyle = props.lightColor || '#ffffff'
+  // Fill white background for JPG
+  ctx.fillStyle = props.lightColor
   ctx.fillRect(0, 0, canvas.width, canvas.height)
   
-  const image = new Image()
-  image.crossOrigin = 'anonymous'
-  image.onload = () => {
-    ctx.drawImage(image, 0, 0)
+  const img = qrContainer.value?.querySelector('canvas')
+  if (img) {
+    ctx.drawImage(img, 0, 0)
     const link = document.createElement('a')
     link.download = `${filename.value}.jpg`
     link.href = canvas.toDataURL('image/jpeg', 0.9)
     link.click()
   }
-  image.src = img.src
 }
 
 const downloadSVG = () => {
-  const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="${currentSize.value}" height="${currentSize.value}">
-    <image href="${qrContainer.value?.querySelector('img')?.src || ''}" width="${currentSize.value}" height="${currentSize.value}"/>
-  </svg>`
+  const qrCode = new QRCodeVue3.QRCodeStyling({
+    data: props.content || 'https://example.com',
+    width: props.size,
+    height: props.size,
+    margin: props.margin,
+    qrOptions: { errorCorrectionLevel: props.errorCorrection },
+    dotsOptions: { type: 'square', color: props.darkColor },
+    backgroundOptions: { color: props.lightColor },
+    cornersSquareOptions: { type: 'square', color: props.darkColor },
+    cornersDotOptions: { color: props.darkColor }
+  })
   
-  const blob = new Blob([svgContent], { type: 'image/svg+xml' })
-  const link = document.createElement('a')
-  link.download = `${filename.value}.svg`
-  link.href = URL.createObjectURL(blob)
-  link.click()
-  URL.revokeObjectURL(link.href)
+  if (qrCode) {
+    qrCode.download({ name: filename.value, extension: 'svg' })
+  }
 }
-
-const qrContainer = ref(null)
 </script>
 
 <style scoped>
@@ -156,8 +143,6 @@ const qrContainer = ref(null)
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
   display: inline-block;
   margin-bottom: 1.5rem;
-  min-width: 250px;
-  min-height: 250px;
 }
 
 .preview-info {
@@ -204,22 +189,12 @@ const qrContainer = ref(null)
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
-}
-
-.btn-png {
-  background: #3498db;
   color: white;
 }
 
-.btn-jpg {
-  background: #e74c3c;
-  color: white;
-}
-
-.btn-svg {
-  background: #2ecc71;
-  color: white;
-}
+.btn-png { background: #3498db; }
+.btn-jpg { background: #e74c3c; }
+.btn-svg { background: #2ecc71; }
 
 .btn-download:hover {
   transform: translateY(-2px);
