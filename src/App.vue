@@ -15,10 +15,24 @@
     <main class="app-main">
       <SplitView>
         <template #left>
-          <QRGenerator />
+          <QRGenerator 
+            v-model:content="content"
+            v-model:size="size"
+            v-model:margin="margin"
+            v-model:errorCorrection="errorCorrection"
+            v-model:darkColor="darkColor"
+            v-model:lightColor="lightColor"
+          />
         </template>
         <template #right>
-          <QRPreview />
+          <QRPreview 
+            :content="content"
+            :size="size"
+            :margin="margin"
+            :errorCorrection="errorCorrection"
+            :darkColor="darkColor"
+            :lightColor="lightColor"
+          />
         </template>
       </SplitView>
     </main>
@@ -26,12 +40,21 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { useTheme } from './composables/useTheme'
 import SplitView from './components/SplitView.vue'
 import QRGenerator from './components/QRGenerator.vue'
 import QRPreview from './components/QRPreview.vue'
 
 const { isDark, toggleTheme } = useTheme()
+
+// Shared state
+const content = ref('https://magm3333.github.io/qrgen_demo/')
+const size = ref(250)
+const margin = ref(2)
+const errorCorrection = ref('M')
+const darkColor = ref('#000000')
+const lightColor = ref('#ffffff')
 </script>
 
 <style>

@@ -1,7 +1,7 @@
 <template>
   <div class="qr-preview">
     <h2 class="preview-title">Vista Previa</h2>
-    <div class="qr-container" ref="qrContainer">
+    <div class="qr-container">
       <QRCodeVue3
         :value="content"
         :width="size"
@@ -12,7 +12,6 @@
         :backgroundOptions="{ color: lightColor }"
         :cornersSquareOptions="{ type: 'square', color: darkColor }"
         :cornersDotOptions="{ color: darkColor }"
-        :key="qrKey"
       />
     </div>
     
@@ -48,7 +47,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import QRCodeVue3 from 'qrcode-vue3'
 
 const props = defineProps({
@@ -61,12 +60,6 @@ const props = defineProps({
 })
 
 const filename = ref('qr_code')
-const qrContainer = ref(null)
-
-// Force re-render when props change
-const qrKey = computed(() => {
-  return `${props.content}-${props.size}-${props.darkColor}-${Date.now()}`
-})
 
 const downloadPNG = () => {
   const qrCode = new QRCodeVue3.QRCodeStyling({
@@ -80,10 +73,7 @@ const downloadPNG = () => {
     cornersSquareOptions: { type: 'square', color: props.darkColor },
     cornersDotOptions: { color: props.darkColor }
   })
-  
-  if (qrCode) {
-    qrCode.download({ name: filename.value, extension: 'png' })
-  }
+  qrCode.download({ name: filename.value, extension: 'png' })
 }
 
 const downloadJPG = () => {
@@ -92,18 +82,34 @@ const downloadJPG = () => {
   canvas.width = props.size
   canvas.height = props.size
   
-  // Fill white background for JPG
   ctx.fillStyle = props.lightColor
   ctx.fillRect(0, 0, canvas.width, canvas.height)
   
-  const img = qrContainer.value?.querySelector('canvas')
-  if (img) {
-    ctx.drawImage(img, 0, 0)
-    const link = document.createElement('a')
-    link.download = `${filename.value}.jpg`
-    link.href = canvas.toDataURL('image/jpeg', 0.9)
-    link.click()
-  }
+  const qrCode = new QRCodeVue3.QRCodeStyling({
+    data: props.content || 'https://example.com',
+    width: props.size,
+    height: props.size,
+    margin: props.margin,
+    qrOptions: { errorCorrectionLevel: props.errorCorrection },
+    dotsOptions: { type: 'square', color: props.darkColor },
+    backgroundOptions: { color: props.lightColor },
+    cornersSquareOptions: { type: 'square', color: props.darkColor },
+    cornersDotOptions: { color: props.darkColor }
+  })
+  
+  qrCode.getRawData('png').then(blob => {
+    const img = new Image()
+    const url = URL.createObjectURL(blob)
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0)
+      const link = document.createElement('a')
+      link.download = `${filename.value}.jpg`
+      link.href = canvas.toDataURL('image/jpeg', 0.9)
+      link.click()
+      URL.revokeObjectURL(url)
+    }
+    img.src = url
+  })
 }
 
 const downloadSVG = () => {
@@ -118,10 +124,7 @@ const downloadSVG = () => {
     cornersSquareOptions: { type: 'square', color: props.darkColor },
     cornersDotOptions: { color: props.darkColor }
   })
-  
-  if (qrCode) {
-    qrCode.download({ name: filename.value, extension: 'svg' })
-  }
+  qrCode.download({ name: filename.value, extension: 'svg' })
 }
 </script>
 

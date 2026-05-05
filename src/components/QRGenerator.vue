@@ -6,7 +6,7 @@
       <label for="qr-content">Contenido (URL o texto)</label>
       <textarea 
         id="qr-content" 
-        v-model="qrContent" 
+        v-model="content" 
         placeholder="https://ejemplo.com"
         rows="3"
         class="input-field"
@@ -19,7 +19,7 @@
         <input 
           id="qr-size" 
           type="number" 
-          v-model.number="qrSize" 
+          v-model.number="size" 
           min="100" 
           max="500"
           class="input-field"
@@ -31,7 +31,7 @@
         <input 
           id="qr-margin" 
           type="number" 
-          v-model.number="qrMargin" 
+          v-model.number="margin" 
           min="0" 
           max="10"
           class="input-field"
@@ -74,22 +74,24 @@
 </template>
 
 <script setup>
-import { useQRCode } from '../composables/useQRCode'
-import { watch } from 'vue'
+import { ref, watch } from 'vue'
 
-const {
-  qrContent,
-  qrSize,
-  qrMargin,
-  errorCorrection,
-  darkColor,
-  lightColor
-} = useQRCode()
+const content = ref('https://magm3333.github.io/qrgen_demo/')
+const size = ref(250)
+const margin = ref(2)
+const errorCorrection = ref('M')
+const darkColor = ref('#000000')
+const lightColor = ref('#ffffff')
 
-// Debug reactivity
-watch([qrContent, qrSize, darkColor], (newVal) => {
-  console.log('QR values changed:', newVal)
-})
+// Emit changes to parent
+const emit = defineEmits(['update:content', 'update:size', 'update:margin', 'update:errorCorrection', 'update:darkColor', 'update:lightColor'])
+
+watch(content, (val) => emit('update:content', val))
+watch(size, (val) => emit('update:size', val))
+watch(margin, (val) => emit('update:margin', val))
+watch(errorCorrection, (val) => emit('update:errorCorrection', val))
+watch(darkColor, (val) => emit('update:darkColor', val))
+watch(lightColor, (val) => emit('update:lightColor', val))
 </script>
 
 <style scoped>
