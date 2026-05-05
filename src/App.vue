@@ -1,16 +1,37 @@
 <template>
-  <div id="qrgen-app">
+  <div id="qrgen-app" :class="{ 'dark-mode': isDark }">
     <header class="app-header">
-      <h1>QR Generator</h1>
-      <p class="subtitle">by Magm</p>
+      <div class="header-content">
+        <div class="logo-section">
+          <h1 class="app-title">QR Generator</h1>
+          <span class="app-badge">by Magm</span>
+        </div>
+        <button class="theme-toggle" @click="toggleTheme" :title="isDark ? 'Cambiar a claro' : 'Cambiar a oscuro'">
+          {{ isDark ? '☀️' : '🌙' }}
+        </button>
+      </div>
     </header>
+    
     <main class="app-main">
-      <p>¡Proyecto inicializado! Comienza a desarrollar.</p>
+      <SplitView>
+        <template #left>
+          <QRGenerator />
+        </template>
+        <template #right>
+          <QRPreview />
+        </template>
+      </SplitView>
     </main>
   </div>
 </template>
 
 <script setup>
+import { useTheme } from './composables/useTheme'
+import SplitView from './components/SplitView.vue'
+import QRGenerator from './components/QRGenerator.vue'
+import QRPreview from './components/QRPreview.vue'
+
+const { isDark, toggleTheme } = useTheme()
 </script>
 
 <style>
@@ -20,10 +41,37 @@
   box-sizing: border-box;
 }
 
+:root {
+  --bg-primary: #f5f5f5;
+  --text-primary: #2c3e50;
+  --text-secondary: #7f8c8d;
+  --panel-bg: #ffffff;
+  --preview-bg: #f8f9fa;
+  --border-color: #e0e0e0;
+  --input-bg: #ffffff;
+  --qr-bg: #ffffff;
+  --accent-color: #3498db;
+  --shadow: rgba(0,0,0,0.08);
+}
+
+[data-theme="dark"] {
+  --bg-primary: #1a1a1a;
+  --text-primary: #ecf0f1;
+  --text-secondary: #95a5a6;
+  --panel-bg: #2d2d2d;
+  --preview-bg: #252525;
+  --border-color: #404040;
+  --input-bg: #333333;
+  --qr-bg: #ffffff;
+  --accent-color: #3498db;
+  --shadow: rgba(0,0,0,0.3);
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #f5f5f5;
-  color: #333;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background 0.3s, color 0.3s;
 }
 
 #qrgen-app {
@@ -33,28 +81,65 @@ body {
 }
 
 .app-header {
-  background: #fff;
-  padding: 1.5rem 2rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  text-align: center;
+  background: var(--panel-bg);
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 4px var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-.app-header h1 {
-  font-size: 1.8rem;
-  color: #2c3e50;
+.header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.subtitle {
-  font-size: 0.9rem;
-  color: #7f8c8d;
-  margin-top: 0.25rem;
+.logo-section {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.app-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.app-badge {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  background: var(--preview-bg);
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+}
+
+.theme-toggle {
+  background: var(--preview-bg);
+  border: 1px solid var(--border-color);
+  font-size: 1.2rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px var(--shadow);
 }
 
 .app-main {
   flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 </style>

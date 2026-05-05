@@ -18,16 +18,16 @@
 
 ---
 
-- [ ] **Fase 2: Generación QR MVP (Split-View)**
-  - [ ] Instalar `qrcode-vue3` (basado en QRCodeStyling para mayor control)
-  - [ ] Layout de 2 columnas (Split-View):
-    - [ ] **Izquierda:** Panel de configuración (input texto/URL, corrección de error, colores)
-    - [ ] **Derecha:** Vista previa del QR en tiempo real
-  - [ ] Componente `QRGenerator.vue`:
-    - [ ] Input reactivo para el contenido
-    - [ ] Opciones: tamaño, margen, nivel de corrección (`L/M/Q/H`)
-    - [ ] Vista previa usando `<QRCodeVue3>`
-  - [ ] Estilos: Replicar el look minimalista de la referencia
+- [x] **Fase 2: Generación QR MVP (Split-View)**
+  - [x] Instalar `qrcode-vue3` (basado en QRCodeStyling para mayor control)
+  - [x] Layout de 2 columnas (Split-View) profesional:
+    - [x] **Izquierda:** Panel de configuración (input texto/URL, corrección de error, colores)
+    - [x] **Derecha:** Vista previa del QR en tiempo real
+  - [x] Componente `QRGenerator.vue`:
+    - [x] Input reactivo para el contenido
+    - [x] Opciones: tamaño, margen, nivel de corrección (`L/M/Q/H`)
+    - [x] Vista previa usando `<QRCodeVue3>`
+  - [x] Estilos profesionales con diseño limpio y moderno
 
 ---
 
