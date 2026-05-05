@@ -31,17 +31,29 @@
 
 ---
 
-- [ ] **Fase 3: Descargas + Temas (Oscuro/Claro)**
-  - [ ] **Descargas:**
-    - [ ] Botones de descarga para PNG (usando `qrcode-vue3` download nativo)
-    - [ ] Botones de descarga para JPG (renderizado a canvas y exportación con `toDataURL('image/jpeg')`)
-    - [ ] Opción de elegir nombre de archivo
-  - [ ] **Temas:**
-    - [ ] Composable `useTheme.js` con detección de preferencia del sistema
-    - [ ] Toggle manual con persistencia en `localStorage`
-    - [ ] Variables CSS globales para colores de ambos temas
-    - [ ] Estilos adaptados para tema claro (fondo blanco, texto oscuro)
-    - [ ] Estilos adaptados para tema oscuro (fondo #1a1a1a, texto claro)
+- [x] **Fase 3: Descargas + Temas (Oscuro/Claro)**
+  - [x] **Descargas:**
+    - [x] Botones de descarga para PNG (nativo)
+    - [x] Botones de descarga para JPG (canvas toDataURL)
+    - [x] Botón de descarga para SVG
+    - [x] Opción de elegir nombre de archivo
+  - [x] **Temas:**
+    - [x] Composable `useTheme.js` con detección de preferencia del sistema
+    - [x] Toggle manual con persistencia en `localStorage`
+    - [x] Variables CSS globales para colores de ambos temas
+    - [x] Estilos adaptados para tema claro (fondo blanco, texto oscuro)
+    - [x] Estilos adaptados para tema oscuro (fondo #1a1a1a, texto claro)
+
+---
+
+### Qué probar en la UI (Fase 2 + 3):
+1. **Generación reactiva:** Escribe en el textarea → El QR se actualiza al instante
+2. **Cambio de colores:** Selecciona color QR y fondo → Vista previa cambia en tiempo real
+3. **Tamaño y margen:** Ajusta los valores numéricos → El QR se redimensiona
+4. **Corrección de error:** Cambia L/M/Q/H → Observa cambios en el QR
+5. **Descargas:** Click en PNG/JPG/SVG → Se descarga con el nombre especificado
+6. **Tema oscuro:** Click en 🌙 → Cambia a tema dark, se persiste en localStorage
+7. **Responsive:** Reduce el ancho de ventana → Split-view se apila verticalmente
 
 ---
 

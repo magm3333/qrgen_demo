@@ -75,6 +75,7 @@
 
 <script setup>
 import { useQRCode } from '../composables/useQRCode'
+import { watch } from 'vue'
 
 const {
   qrContent,
@@ -84,6 +85,11 @@ const {
   darkColor,
   lightColor
 } = useQRCode()
+
+// Debug reactivity
+watch([qrContent, qrSize, darkColor], (newVal) => {
+  console.log('QR values changed:', newVal)
+})
 </script>
 
 <style scoped>
